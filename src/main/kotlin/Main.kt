@@ -7,8 +7,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
-import tech.parkhurst.modal.Priority
-import tech.parkhurst.modal.Task
 import java.util.Collections
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
@@ -42,28 +40,14 @@ fun main() {
                 }
             }
 
-            webSocket("/tasks") {
-                val tasks = listOf(
-                    Task("cleaning", "Clean the house", Priority.Low),
-                    Task("gardening", "Mow the lawn", Priority.Medium),
-                    Task("shopping", "Buy the groceries", Priority.High),
-                    Task("painting", "Paint the fence", Priority.Medium)
-                )
-                println("Connected")
-                for (task in tasks) {
-                    sendSerialized(task)
-                    delay(1000)
-                }
 
-                close(CloseReason(CloseReason.Codes.NORMAL, "All done"))
-            }
-
-            webSocket("/ws") {
+            webSocket("/") {
                 sessions.add(this)
                 try {
                     // Optionally, handle incoming messages here
                     for (frame in incoming) {
                         // Ignore messages or handle as needed
+                        println(frame)
                     }
                 } finally {
                     sessions.remove(this)
