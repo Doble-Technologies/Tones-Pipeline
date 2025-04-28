@@ -2,16 +2,16 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[FEATURE]"
-labels: ''
+labels: new feature
 assignees: ''
 
 ---
 
 ---
-name: "\U0001F680 Requested Feature"
-about: "I have a suggestion (and may want to implement it \U0001F642)!"
+name: "Requested Feature"
+about: "I have a suggestion (and may want to implement it!"
 title: ''
-labels: 'i: enhancement, i: needs triage'
+labels: 'i: new feature, i: needs triage'
 assignees: ''
 
 ---
