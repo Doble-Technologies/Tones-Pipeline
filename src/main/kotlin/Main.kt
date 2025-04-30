@@ -13,11 +13,15 @@ import kotlin.time.Duration.Companion.seconds
 import java.io.File
 
 
+
+
 fun main() {
     embeddedServer(Netty, port = 8765) {
         install(WebSockets) {
             pingPeriod = 30.seconds
             timeout = 15.seconds
+            maxFrameSize = Long.MAX_VALUE
+            masking = false
         }
         routing {
             // Thread-safe set for all connected sessions
@@ -26,25 +30,56 @@ fun main() {
             // Launch a coroutine for periodic broadcasting
             launch {
                 while (true) {
-                    delay(60_000)
-                    val letter = ('A'..'Z').random()
-                    // Broadcast the letter to all connected sessions
+                    delay(300_000)
+                    //Global coroutine
                     synchronized(sessions) {
                         sessions.forEach { session ->
                             launch {
-                                session.send(letter.toString())
+                                session.send("Connected to Pipeline still")
                             }
                         }
                     }
-                    println("Broadcasted: $letter")
+                }
+            }
+            webSocket("/") {
+                sessions.add(this)
+                try {
+                    synchronized(sessions) {
+                        sessions.forEach { session ->
+                            launch {
+                                session.send("Connected")
+                            }
+                        }
+                    }
+                } finally {
+                    sessions.remove(this)
                 }
             }
 
 
-            webSocket("/") {
+            webSocket("/abc") {
                 sessions.add(this)
                 try {
-                    // Optionally, handle incoming messages here
+                    while (true) {
+                        delay(60_000)
+                        val letter = ('A'..'Z').random()
+                        // Broadcast the letter to all connected sessions
+                        synchronized(sessions) {
+                            sessions.forEach { session ->
+                                launch {
+                                    session.send(letter.toString())
+                                }
+                            }
+                        }
+                        println("Broadcasted: $letter")
+                    }
+                } finally {
+                    sessions.remove(this)
+                }
+            }
+            webSocket("/send") {
+                sessions.add(this)
+                try {
                     for (frame in incoming) {
                         // Ignore messages or handle as needed
                         println(frame)
