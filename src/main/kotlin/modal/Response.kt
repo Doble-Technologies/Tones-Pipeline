@@ -1,9 +1,13 @@
 package tech.parkhurst.modal
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Response(
-    val intID: Int,
-    val responseID: Int,
-    val serviceID: Int,
-    val serviceName: String,
-    val units: Array<Unit>
-)
+    var intID: Int=0,
+    var responseID: Int=0,
+    var serviceID: Int=0,
+    var serviceName: String="",
+//    var units: Array<Unit> = arrayOf<Unit>()
+){
+}

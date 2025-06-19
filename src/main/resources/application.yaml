@@ -1,0 +1,9 @@
+ktor:
+  deployment:
+    sslPort: 8443
+  security:
+    ssl:
+      keyStore: keystore.jks
+      keyAlias: alias
+      keyStorePassword: password
+      privateKeyPassword: password
