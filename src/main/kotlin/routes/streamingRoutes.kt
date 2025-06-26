@@ -12,12 +12,15 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.Json.Default.encodeToString
 //import io.github.serpro69.kfaker.Faker
 import com.x12q.kotlin.randomizer.lib.random
+import tech.parkhurst.services.GeneratorLogic
 
-fun generateCall(): Response {
-    var test: Response = Response(1,4,3,"NHFD")
+//fun generateCall(): Response {
+//    var test: Response = Response(1,4,3,"NHFD")
+//
+//    return test
+//}
+val generator: GeneratorLogic = GeneratorLogic()
 
-    return test
-}
 
 fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
 
@@ -28,7 +31,7 @@ fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
             while (true){
                 val randomValue = Random.nextLong(20_000, 120_000)
                 delay(5_000)//5 seconds
-                val jsonString = encodeToString(generateCall())
+                val jsonString = encodeToString(generator.generateCall())
                 this.send(jsonString)
             }
         } finally {

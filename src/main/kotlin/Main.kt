@@ -1,13 +1,4 @@
 package tech.parkhurst
-import com.mitteloupe.randomgenkt.FieldDataProvider
-import com.mitteloupe.randomgenkt.builder.RandomGenBuilder
-import com.mitteloupe.randomgenkt.fielddataprovider.ConcatenateFieldDataProvider
-import com.mitteloupe.randomgenkt.fielddataprovider.ExplicitFieldDataProvider
-import com.mitteloupe.randomgenkt.fielddataprovider.ExpressionFieldDataProvider
-import com.mitteloupe.randomgenkt.fielddataprovider.GenericListFieldDataProvider
-import com.mitteloupe.randomgenkt.fielddataprovider.IntFieldDataProvider
-import com.mitteloupe.randomgenkt.fielddataprovider.PaddedFieldDataProvider
-import com.x12q.kotlin.randomizer.lib.random
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
@@ -22,21 +13,15 @@ import java.util.Collections
 import kotlin.time.Duration.Companion.seconds
 import java.io.File
 import org.slf4j.LoggerFactory
-import tech.parkhurst.modal.Response
-import tech.parkhurst.services.GeneratorLogic
 import java.security.KeyStore
-import kotlin.system.exitProcess
 
 
 //Todo finish streamingRoutes, and ingest routes(CRUD API)
-// Setup connect to pocketbase auth db & bytebase lts postgres db
-
-
-
+// Setup connect to pocketbase auth db & postgress dbs
 private fun ApplicationEngine.Configuration.envConfig() {
 
     val keyStore = KeyStore.getInstance("JKS").apply {
-        File("src/main/resources/certs/keystore.jks").inputStream().use { load(it, "Panda1234".toCharArray()) }
+        File("src/main/resources/certs/keystore.jks").inputStream().use { load(it, "X".toCharArray()) }
     }
     connector {
         port = 8080
@@ -44,7 +29,7 @@ private fun ApplicationEngine.Configuration.envConfig() {
     }
     sslConnector(
         keyStore = keyStore,
-        keyAlias = "alias",
+        keyAlias = "X",
         keyStorePassword = { "X".toCharArray() },
         privateKeyPassword = { "X".toCharArray() }) {
         port = 8443
@@ -53,12 +38,6 @@ private fun ApplicationEngine.Configuration.envConfig() {
 
 
 fun main() {
-
-
-    val generator:GeneratorLogic = GeneratorLogic()
-    var unit =generator.generateUnit()
-
-
     embeddedServer(Netty, applicationEnvironment { log = LoggerFactory.getLogger("ktor.application") }, {envConfig()}) {
         install(WebSockets) {
             pingPeriod = 30.seconds

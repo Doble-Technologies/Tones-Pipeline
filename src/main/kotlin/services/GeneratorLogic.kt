@@ -53,8 +53,6 @@ class GeneratorLogic {
         File("src/main/resources/weather.txt").forEachLine {
             weather.add(it);
         }
-
-
     }
 
     private fun generateDepartment(): String{
@@ -137,7 +135,7 @@ class GeneratorLogic {
         return timestamps
     }
 
-    fun generatePerson(): Person{
+    private fun generatePerson(): Person{
         val genders = arrayOf("Male","Female")
         val yesNo = arrayOf("Yes","No")
         return Person(3,
@@ -151,11 +149,11 @@ class GeneratorLogic {
         )
     }
 
-    fun generateAddress(): Address?{
+    private fun generateAddress(): Address? {
         val cords=generateRandomCoordinates("CONNECTICUT")
         val latLngCords = LatLng(cords[0],cords[1])
         val geoContext = GeoApiContext.Builder()
-            .apiKey("")
+            .apiKey("x")
             .build()
         val req = GeocodingApi.newRequest(geoContext).latlng(latLngCords)
         var addressData: GeocodingResult? =null
@@ -201,11 +199,12 @@ class GeneratorLogic {
             println("errrr John")
             println(e.toString())
             println(e.message)
+            return null
         }
         return address
     }
 
-    fun generateIncident(): Incident{
+    private fun generateIncident(incidentID: Int): Incident{
         var now = LocalDateTime.now()
         // Format with 3 digits then trim to 2
         var timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
@@ -221,7 +220,7 @@ class GeneratorLogic {
             natureCode="N/A"
         }
         var incident: Incident = Incident(
-            Random.nextInt(1,99999),
+            incidentID,
             Random.nextInt(1,99999),
             Random.nextInt(1,200),
             Random.nextInt(1,500),
@@ -237,12 +236,23 @@ class GeneratorLogic {
         return incident
     }
 
-    fun generateCall(){
-
+    fun generateCall() : Call?{
+        val response: Response = generateResponse()
+        val generateAddress: Address?= generateAddress()
+        val person: Person = generatePerson()
+        val incident: Incident= generateIncident(response.incID)
+        val call=Call(
+            Random.nextLong(0L,9999999L),
+            person = person,
+            incident = incident,
+            response= response,
+            address = generateAddress,
+        )
+        return call
     }
 
     //Generate a response Unit
-    fun generateUnit() : Unit{
+    private fun generateUnit() : Unit{
         val timestamps=generateTimeStamps()
         val generatedUnit = Unit(
             Random.nextLong(1,99999),
@@ -257,25 +267,21 @@ class GeneratorLogic {
         return generatedUnit
     }
 
-    fun generateResponse(): Response {
+    private fun generateResponse(): Response {
         val numUnits = Random.nextInt(0,7)
-        var generatedUnits: ArrayList<Unit> = ArrayList<Unit>()
-
+        val generatedUnits: ArrayList<Unit> = ArrayList<Unit>()
         for (nums in 0..numUnits){
             val unit = generateUnit()
             generatedUnits.add(unit)
         }
-        val responseGen= RandomGenBuilder<Response>()
-            .withProvider { Response(units = generatedUnits) }
-            .withField("incID")
-            .returning(1,50000)
-            .withField("responseID")
-            .returning(1,999999)
-            .withField("serviceID")
-            .returning(1,999999)
-            .withField("serviceName")
-            .returning(listOf("Noroton", "Noroton Heights", "Darien", "Stamford"))//Push this to file and then potentially api call
-            .build()
-        return responseGen()
+        val departments=listOf("Noroton", "Noroton Heights", "Darien", "Stamford")
+        val response=Response(
+            Random.nextInt(1,50000),
+            Random.nextInt(1,999999),
+            Random.nextInt(1,999999),
+            departments[Random.nextInt(0,departments.size)],
+            units=generatedUnits
+        )
+        return response
     }
 }

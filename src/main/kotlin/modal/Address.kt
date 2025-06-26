@@ -1,6 +1,8 @@
 package tech.parkhurst.modal
 
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Address(
     val addressId: String,
     val streetAddress: String,

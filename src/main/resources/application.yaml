@@ -4,6 +4,6 @@ ktor:
   security:
     ssl:
       keyStore: keystore.jks
-      keyAlias: alias
-      keyStorePassword: password
-      privateKeyPassword: password
+      keyAlias: rcslab
+      keyStorePassword: Panda1234
+      privateKeyPassword: Panda1234
