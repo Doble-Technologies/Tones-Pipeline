@@ -1,0 +1,20 @@
+EMS ALS PRIORITY (ALS)
+EMS Standard Basic Life Support Response (BLS)
+EMS Advanced Life Support life threatening response (ALS)
+EMS BLS Non-Emergency Transport
+EMS ALS Intercept Required
+EMS BLS Priority Response
+EMS ALS Response – Cardiac Related
+EMS BLS Standby – Event Coverage
+EMS ALS Response – Respiratory Distress
+EMS Public Assist – Lift Only (BLS)
+EMS ALS Response – Stroke Alert
+EMS Basic Life Support with Paramedic Assist (BLS)
+EMS BLS Response – Fall Injury
+EMS ALS Tiered Response with Fire
+EMS Response – Behavioral Emergency (ALS)
+EMS Response – Obstetric Emergency (ALS)
+EMS ALS Response – Overdose / Poisoning
+EMS BLS Scheduled Interfacility Transport
+EMS ALS Priority Interfacility Transfer
+EMS Response – Unresponsive / Unconscious Patient (ALS)
