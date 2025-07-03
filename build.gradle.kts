@@ -52,14 +52,19 @@ dependencies {
     implementation("com.google.maps:google-maps-services:2.2.0")
     implementation("org.slf4j:slf4j-simple:1.7.25")
 
-
-    implementation("org.jetbrains.exposed:exposed-core:0.50.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.50.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.50.1")
+    implementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
+    implementation("org.jetbrains.exposed:exposed-dao:1.0.0-beta-2")
+    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
+    implementation("org.jetbrains.exposed:exposed-json:1.0.0-beta-2")
     implementation("org.postgresql:postgresql:42.7.2")
-    //Connection Pooling
-    implementation("com.zaxxer:HikariCP:5.1.0")
 
+    //API KEY SETUP
+    implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
+    //
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    //Rate Limiter
+
+    implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
 }
 
 tasks.test {

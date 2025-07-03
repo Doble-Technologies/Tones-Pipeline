@@ -191,7 +191,6 @@ class GeneratorLogic {
                 faker.address.streetAddress(),//junk intersection
                 weatherCondition=weather[Random.nextInt(0,weather.size)]
             )
-            println(addressData)
         } catch (e: Exception) {
             println("errrr John")
             println(e.toString())
@@ -233,7 +232,7 @@ class GeneratorLogic {
         return incident
     }
 
-    fun generateCall() : Call?{
+    fun generateCall() : Call{
         val response: Response = generateResponse()
         val generateAddress: Address?= generateAddress()
         val person: Person = generatePerson()

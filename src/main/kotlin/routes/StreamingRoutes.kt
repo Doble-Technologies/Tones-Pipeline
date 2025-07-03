@@ -20,9 +20,12 @@ fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
             while (true){
                 val randomValue = Random.nextLong(520_000, 680_000)
                 delay(randomValue)//5 seconds
-                val jsonString = encodeToString(generator.generateCall())
-                //Send to db as a json file
-                this.send(jsonString)
+                val callData=generator.generateCall()
+                //Send to db
+
+
+                val jsonCall = encodeToString(callData)
+                this.send(jsonCall)
             }
         }catch(e: Exception){
             println(e.toString())
