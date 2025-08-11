@@ -36,21 +36,20 @@ class GeneratorLogic {
         stateBounds?.set("TEXAS", doubleArrayOf(25.837377, -106.645646, 36.500704, -93.508292))
         stateBounds?.set("CONNECTICUT", doubleArrayOf(40.98014,-73.72777,42.05059,-71.78172))
 
-        object {}.javaClass.getResourceAsStream("/statements.txt").bufferedReader().use {
-            statements.add(it.readText())
+        object {}.javaClass.getResourceAsStream("/statements.txt").bufferedReader().useLines { lines ->
+            statements.addAll(lines)
         }
-
-        object {}.javaClass.getResourceAsStream("/incidentnatures.txt").bufferedReader().use {
-            natures.add(it.readText());
+        object {}.javaClass.getResourceAsStream("/incidentnatures.txt").bufferedReader().useLines { lines ->
+            natures.addAll(lines)
         }
-        object {}.javaClass.getResourceAsStream("/incidentnotes.txt").bufferedReader().use {
-            notes.add(it.readText());
+        object {}.javaClass.getResourceAsStream("/incidentnotes.txt").bufferedReader().useLines { lines ->
+            notes.addAll(lines)
         }
-        object {}.javaClass.getResourceAsStream("/incidentdesc.txt").bufferedReader().use {
-            incDescriptions.add(it.readText());
+        object {}.javaClass.getResourceAsStream("/incidentdesc.txt").bufferedReader().useLines { lines ->
+            incDescriptions.addAll(lines)
         }
-        object {}.javaClass.getResourceAsStream("/weather.txt").bufferedReader().use {
-            weather.add(it.readText());
+        object {}.javaClass.getResourceAsStream("/weather.txt").bufferedReader().useLines { lines ->
+            weather.addAll(lines)
         }
         if(statements.isEmpty() || natures.isEmpty() || notes.isEmpty() || incDescriptions.isEmpty() || weather.isEmpty()){
             exitProcess(32)
@@ -214,12 +213,14 @@ class GeneratorLogic {
         val openClose = arrayOf("Open","Closed")
         val natureDesc=incDescriptions[Random.nextInt(0,incDescriptions.size)]
         var natureCode=""
-        if(natureDesc.contains("BLS")){
-            natureCode="BLS"
-        }else if(natureDesc.contains("ALS")){
+        if(natureDesc.contains("EMS ALS")){
             natureCode="ALS"
+        }else if(natureDesc.contains("EMS BLS") || natureDesc.contains("EMS Basic Life Support")){
+            natureCode="BLS-PRIORITY"
+        }else if(natureDesc.contains("EMS Standard")){
+            natureCode="BLS-STANDARD"
         }else{
-            natureCode="N/A"
+            natureCode="BLS-PRIORITY"
         }
         var incident: Incident = Incident(
             incidentID,

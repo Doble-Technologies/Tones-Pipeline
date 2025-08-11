@@ -1,13 +1,9 @@
 package tech.parkhurst.services
 
-import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.SortOrder
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import tech.parkhurst.modal.Call
 import tech.parkhurst.modal.tables.CallDataTable
@@ -71,15 +67,25 @@ fun getRecentCalls(numOfCalls: Int) : String {
  */
 fun insertCallData(callData: Call): Int {
     val generatedId = 0
+    val callStatus = callData.incident.status
+    val callId:Long = callData.callId
     return try {
         transaction {
             // Execute a simple query to check the connection
             val test=CallDataTable.insert {
+                it[id]=callId.toInt()
                 it[data]= callData
+                it[status] = callStatus
             }
             test.insertedCount
         }
     } catch (e: Exception) {
+        //Update table
+
+
+        //or push  old row to audit table
+        //then insert
+
         println("Error Insert: $e")
         generatedId
     }

@@ -11,7 +11,6 @@ import tech.parkhurst.config.UserSession
 import tech.parkhurst.routes.streamingRoutes
 import java.util.Collections
 import kotlin.time.Duration.Companion.seconds
-import java.io.File
 import org.slf4j.LoggerFactory
 import tech.parkhurst.config.connectToDatabase
 import tech.parkhurst.routes.ingestRoutes
@@ -19,6 +18,7 @@ import java.security.KeyStore
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.http.*
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.ratelimit.*
 import kotlin.system.exitProcess
 
@@ -117,3 +117,4 @@ fun main() {
 
     }.start(wait = true)
 }
+

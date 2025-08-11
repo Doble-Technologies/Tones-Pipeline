@@ -1,6 +1,8 @@
 package tech.parkhurst.routes
 
+import io.ktor.client.request.invoke
 import io.ktor.http.*
+import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import tech.parkhurst.modal.Call
@@ -31,7 +33,7 @@ fun Route.ingestRoutes(){
     }
 
     get("/testendpoint"){
-        call.respondText("{'id': 4}")
+        call.respondText("{'version': 1.01}")
     }
 
 

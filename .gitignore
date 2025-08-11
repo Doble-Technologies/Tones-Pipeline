@@ -47,3 +47,5 @@ src/main/resources/certs/cloudflare_origin_ca_rsa_root.pem
 src/main/resources/certs/fullchain.pem
 src/main/resources/certs/keystore.p12
 src/main/resources/certs/privatekey.pem
+
+.kotlin
