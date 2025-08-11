@@ -57,21 +57,21 @@ class GeneratorLogic {
 
     }
 
-    private fun generateDepartment(): String{
+    private fun generateDepartment(): Map<Int, String>{
         //TODO: Replace this with a db lookup call
-        val departments=ArrayList<String>()
-        departments.add("Darien EMS")
-        departments.add("Noroton Fire Department")
-        departments.add("Stamford Fire Department")
-        departments.add("Noroton Heights Fire Department")
-        departments.add("Darien Fire Department")
-        departments.add("Darien EMS Supv")
-        departments.add("Norwalk Fire Department")
-        departments.add("Norwalk Hospital EMS")
-        departments.add("Stamford EMS")
-        departments.add("Greenwich EMS")
+        val departments=ArrayList<Map<Int, String>>()
+            departments.add(mapOf(1 to "Darien EMS"))
+            departments.add(mapOf(2 to "Noroton Fire Department"))
+            departments.add(mapOf(3 to "Stamford Fire Rescue"))
+            departments.add(mapOf(4 to "Noroton Heights Fire Department"))
+            departments.add(mapOf(5 to "Darien Fire Department"))
+            departments.add(mapOf(6 to "Darien EMS Supv"))
+            departments.add(mapOf(7 to "Norwalk Fire Department"))
+            departments.add(mapOf(8 to "Norwalk Hospital EMS"))
+            departments.add(mapOf(9 to "Stamford EMS"))
+            departments.add(mapOf(10 to "Greenwich EMS"))
         val index : Int = Random.nextInt(0,departments.size)
-        return departments.get(index)
+        return departments[index]
     }
 
     /**
@@ -205,7 +205,7 @@ class GeneratorLogic {
         return address
     }
 
-    private fun generateIncident(incidentID: Int): Incident{
+    private fun generateIncident(incidentID: Int, department: Map<Int, String>): Incident{
         var now = LocalDateTime.now()
         // Format with 3 digits then trim to 2
         var timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
@@ -227,7 +227,7 @@ class GeneratorLogic {
             Random.nextInt(1,99999),
             Random.nextInt(1,200),
             Random.nextInt(1,500),
-            Random.nextInt(1,500),//service id
+            department.keys.first(),//service id
             formattedTimestamp,
             natures[Random.nextInt(0,natures.size)],
             natureCode,
@@ -240,10 +240,11 @@ class GeneratorLogic {
     }
 
     fun generateCall() : Call{
-        val response: Response = generateResponse()
+        val department = generateDepartment()
+        val response: Response = generateResponse(department)
         val generateAddress: Address?= generateAddress()
         val person: Person = generatePerson()
-        val incident: Incident= generateIncident(response.incID)
+        val incident: Incident= generateIncident(response.incID, department)
         val call=Call(
             Random.nextLong(0L,9999999L),
             person = person,
@@ -257,10 +258,12 @@ class GeneratorLogic {
     //Generate a response Unit
     private fun generateUnit() : Unit{
         val timestamps=generateTimeStamps()
+        val department = generateDepartment()
         val generatedUnit = Unit(
             Random.nextLong(1,99999),
             faker.random.randomString(3,6),
-            generateDepartment(),
+            department.keys.first(),
+            department.values.first(),
             timestamps[0],
             timestamps[1],
             timestamps[2],
@@ -270,19 +273,18 @@ class GeneratorLogic {
         return generatedUnit
     }
 
-    private fun generateResponse(): Response {
+    private fun generateResponse(department: Map<Int, String>): Response {
         val numUnits = Random.nextInt(0,7)
         val generatedUnits: ArrayList<Unit> = ArrayList<Unit>()
         for (nums in 0..numUnits){
             val unit = generateUnit()
             generatedUnits.add(unit)
         }
-        val departments=listOf("Noroton", "Noroton Heights", "Darien", "Stamford")
         val response=Response(
             Random.nextInt(1,50000),
             Random.nextInt(1,999999),
-            Random.nextInt(1,999999),
-            departments[Random.nextInt(0,departments.size)],
+            department.keys.first(),
+            department.values.first(),
             units=generatedUnits
         )
         return response
