@@ -34,7 +34,7 @@ fun Route.ingestRoutes(){
     }
 
     get("/testendpoint"){
-        call.respondText("{'version': 1.0.2}")
+        call.respondText("{'version': 1.0.3}")
     }
 
 
