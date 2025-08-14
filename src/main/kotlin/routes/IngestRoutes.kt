@@ -34,7 +34,7 @@ fun Route.ingestRoutes(){
     }
 
     get("/testendpoint"){
-        call.respondText("{'version': 1.0.2}")
+        call.respondText("{'version': 1.0.4}")
     }
 
 
@@ -75,5 +75,11 @@ fun Route.ingestRoutes(){
         val parameters = call.receive<ByteArray>()
         val decoded = Json.decodeFromString<GetCallsParams>(parameters.decodeToString())
         call.respond(getCallsParams(decoded.numCalls, decoded.departments, decoded.status))
+    }
+
+    post("/ingest"){
+        val parameters = call.receive<ByteArray>()
+        val decoded = Json.decodeFromString<Call>(parameters.decodeToString())
+        call.respond(decoded.toString())
     }
 }
