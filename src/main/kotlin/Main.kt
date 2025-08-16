@@ -60,7 +60,10 @@ fun main() {
         install(Authentication) {
             provider("apiKey") {
                 authenticate { context ->
-                    val apiKey = context.call.request.headers["apiKey"]
+                    var apiKey = context.call.request.headers["apiKey"]
+                    if(apiKey==null){
+                        apiKey=context.call.parameters["apiKey"]
+                    }
                     if (apiKey == expectedApiKey) {
                         context.principal(UserIdPrincipal("api-user"))
                     } else {
