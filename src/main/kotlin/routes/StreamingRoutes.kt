@@ -1,5 +1,6 @@
 package tech.parkhurst.routes
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
@@ -9,6 +10,7 @@ import kotlinx.serialization.json.Json.Default.encodeToString
 import tech.parkhurst.services.GeneratorLogic
 
 val generator: GeneratorLogic = GeneratorLogic()
+private val logger = KotlinLogging.logger {}
 
 
 fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
@@ -28,7 +30,7 @@ fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
                 this.send(jsonCall)
             }
         }catch(e: Exception){
-            println(e.toString())
+            logger.error{ "Unkown error in call feed: $e" }
             this.send(e.toString())
 
         }finally {
@@ -46,7 +48,7 @@ fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
                 this.send("CONNECTED")
             }
         }catch(e: Exception){
-            println(e.toString())
+            logger.error {"Error in test feed $e"}
             this.send(e.toString())
 
         }finally {

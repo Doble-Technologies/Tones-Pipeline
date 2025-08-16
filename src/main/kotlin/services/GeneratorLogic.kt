@@ -6,6 +6,7 @@ import com.google.maps.model.AddressComponent
 import com.google.maps.model.AddressComponentType
 import com.google.maps.model.GeocodingResult
 import com.google.maps.model.LatLng
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.serpro69.kfaker.Faker
 import tech.parkhurst.modal.*
 import tech.parkhurst.modal.Unit
@@ -26,6 +27,7 @@ class GeneratorLogic {
     private var incDescriptions: ArrayList<String> = ArrayList<String>()
     private var weather: ArrayList<String> = ArrayList<String>()
     private var apiKey: String = System.getenv("googleApiKey") ?: ""
+    private val logger = KotlinLogging.logger {}
 
 
     init {
@@ -197,9 +199,7 @@ class GeneratorLogic {
                 weatherCondition=weather[Random.nextInt(0,weather.size)]
             )
         } catch (e: Exception) {
-            println("errrr John")
-            println(e.toString())
-            println(e.message)
+            logger.error { "Error With Google Cloud API: $e" }
             return null
         }
         return address

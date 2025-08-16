@@ -1,5 +1,6 @@
 package tech.parkhurst.services
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.jdbc.andWhere
@@ -12,6 +13,9 @@ import tech.parkhurst.modal.Call
 import tech.parkhurst.modal.tables.CallDataTable
 import tech.parkhurst.modal.tables.toStrings
 import tech.parkhurst.services.helpers.jsonbArrayOverlap
+
+private val logger = KotlinLogging.logger {}
+
 
 
 fun getCall(searchId: Int) : String {
@@ -27,7 +31,7 @@ fun getCall(searchId: Int) : String {
         }
         return ourCall
     }catch(e: Exception){
-        println("Error finding call: $e")
+        logger.error { "Error finding call: $e" }
         return "{}"
     }
 }
@@ -42,7 +46,7 @@ fun getAllCalls() : String {
         }
         return Json.encodeToString(callData)
     }catch(e: Exception){
-        println("Error finding call: $e")
+        logger.error { "Error finding call: $e" }
         return "[]"
     }
 }
@@ -60,7 +64,7 @@ fun getRecentCalls(numOfCalls: Int) : String {
         }
         return Json.encodeToString(callData)
     }catch(e: Exception){
-        println("Error finding call: $e")
+        logger.error { "Error finding call: $e" }
         return "[]"
     }
 }
@@ -86,7 +90,7 @@ fun getCallsParams(numOfCalls: Int, departments: List<Int> = emptyList(), status
         }
         return Json.encodeToString(callData)
     }catch(e: Exception){
-        println("Error finding call: $e")
+        logger.error { "Error finding call: $e" }
         return "[]"
     }
 }
@@ -116,7 +120,7 @@ fun insertCallData(callData: Call): Int? {
             test?.get(CallDataTable.id)
         }
     } catch (e: Exception) {
-        println("Error Insert: $e")
+        logger.error { "Error on DB Insert: $e" }
         generatedId
     }
 }

@@ -49,9 +49,15 @@ dependencies {
     //Kotlin Random
     implementation("io.github.serpro69:kotlin-faker:2.0.0-rc.10")
 
+    //Google Maps
     implementation("com.google.maps:google-maps-services:2.2.0")
     implementation("org.slf4j:slf4j-simple:1.7.25")
+    //Logging:
+    implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
+    implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
 
+    //DB
     implementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
     implementation("org.jetbrains.exposed:exposed-dao:1.0.0-beta-2")
     implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
@@ -60,10 +66,8 @@ dependencies {
 
     //API KEY SETUP
     implementation("io.ktor:ktor-server-request-validation:$ktorVersion")
-    //
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     //Rate Limiter
-
     implementation("io.ktor:ktor-server-rate-limit:$ktorVersion")
 }
 
