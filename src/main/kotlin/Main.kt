@@ -1,4 +1,5 @@
 package tech.parkhurst
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.application.*
@@ -20,6 +21,9 @@ import io.ktor.server.response.*
 import io.ktor.http.*
 import io.ktor.server.plugins.ratelimit.*
 import kotlin.system.exitProcess
+
+
+private val logger = KotlinLogging.logger {}
 
 //Todo finish streamingRoutes, and ingest routes(CRUD API)
 // Setup connect to pocketbase auth db & postgress dbs
@@ -46,13 +50,14 @@ private fun ApplicationEngine.Configuration.envConfig() {
         privateKeyPassword = { jksPass.toCharArray() }) {
         port = 8443
     }
-
-
 }
+
+
+
 fun main() {
     val expectedApiKey: String = System.getenv("apiKey") ?: ""
     if(expectedApiKey == ""){
-        println("Please Pass in Generated API Key")
+        logger.error { "Please Pass in Generated API Key for Users" }
         exitProcess(99);
     }
 
