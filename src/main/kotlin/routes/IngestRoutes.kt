@@ -90,7 +90,26 @@ fun Route.ingestRoutes(){
                 createUser(decoded).toString()
             )
         } catch (e: Exception) {
-            println(e)
+            val (status, error, details) = when (e) {
+                is SerializationException -> Triple(
+                    HttpStatusCode(470, "Invalid Call Data"),
+                    "Failed to parse request body into Call object",
+                    e.message ?: "Unknown serialization error"
+                )
+                is SQLException -> Triple(
+                    HttpStatusCode(471, "Database Insert Error"),
+                    "Failed to insert call data into database",
+                    e.message ?: "Unknown SQL error"
+                )
+                else -> Triple(
+                    HttpStatusCode.InternalServerError,
+                    "Unexpected server error",
+                    e.message ?: "No details available"
+                )
+            }
+
+            call.respond(status, mapOf("error" to error, "details" to details))
+            logger.error { "${e::class.simpleName}: $e" }
         }
     }
 
