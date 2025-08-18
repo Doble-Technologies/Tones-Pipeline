@@ -79,7 +79,7 @@ fun Route.ingestRoutes(){
     post("/getCallsParams"){
         val parameters = call.receive<ByteArray>()
         val decoded = Json.decodeFromString<GetCallsParams>(parameters.decodeToString())
-        call.respond(getCallsParams(decoded.numCalls, decoded.departments, decoded.status))
+        call.respond(getCallsParams(decoded))
     }
 
     post("/createUser") {
@@ -87,18 +87,7 @@ fun Route.ingestRoutes(){
             val parameters = call.receive<ByteArray>()
             val decoded = Json.decodeFromString<CreateUserParams>(parameters.decodeToString())
             call.respond(
-                createUser(
-                    decoded.firstName,
-                    decoded.lastName,
-                    decoded.number,
-                    decoded.email,
-                    decoded.provider,
-                    decoded.departments,
-                    decoded.globalRole,
-                    decoded.primaryDept,
-                    decoded.token,
-                    decoded.firebaseUid,
-                ).toString()
+                createUser(decoded).toString()
             )
         } catch (e: Exception) {
             println(e)
