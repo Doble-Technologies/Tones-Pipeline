@@ -21,7 +21,9 @@ import io.ktor.server.response.*
 import io.ktor.http.*
 import io.ktor.server.plugins.ratelimit.*
 import kotlin.system.exitProcess
-
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import tech.parkhurst.routes.notificationRoutes
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,6 +62,8 @@ fun main() {
         logger.error { "Please Pass in Generated API Key for Users" }
         exitProcess(99);
     }
+
+    val client = HttpClient(CIO)
 
     embeddedServer(Netty, applicationEnvironment { log = LoggerFactory.getLogger("ktor.application") }, {envConfig()}) {
         install(Authentication) {
@@ -119,9 +123,12 @@ fun main() {
                 rateLimit(RateLimitName("protected")){
                     ingestRoutes()
                 }
+                notificationRoutes(client)
             }
+        }
+        environment.monitor.subscribe(ApplicationStopped) {
+            client.close()
         }
 
     }.start(wait = true)
 }
-

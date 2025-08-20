@@ -27,6 +27,7 @@ dependencies {
     val ktorVersion = "3.1.2"
 
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-websockets-jvm:$ktorVersion")
@@ -51,6 +52,7 @@ dependencies {
 
     //Google Maps
     implementation("com.google.maps:google-maps-services:2.2.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
     implementation("org.slf4j:slf4j-simple:1.7.25")
     //Logging:
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
