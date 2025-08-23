@@ -15,12 +15,12 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="info" additivity="false">
+
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="LOKI"/>
+        <appender-ref ref="FILE" />
     </root>
-    <root level="DEBUG">
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="STDOUT"/>
-    </root>
+    <logger name="io.netty" level="OFF"/>
+
 </configuration>

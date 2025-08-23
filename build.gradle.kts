@@ -25,6 +25,7 @@ dependencies {
 
     // Ktor (use the version you had in pom)
     val ktorVersion = "3.1.2"
+    val exposedVersion = "1.0.0-beta-2"
 
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
@@ -59,10 +60,11 @@ dependencies {
     implementation("com.github.loki4j:loki-logback-appender:1.5.1")
 
     //DB
-    implementation("org.jetbrains.exposed:exposed-core:1.0.0-beta-2")
-    implementation("org.jetbrains.exposed:exposed-dao:1.0.0-beta-2")
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.0.0-beta-2")
-    implementation("org.jetbrains.exposed:exposed-json:1.0.0-beta-2")
+    implementation("org.jetbrains.exposed:exposed-core:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-dao:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-jdbc:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-json:${exposedVersion}")
+    implementation("org.jetbrains.exposed:exposed-java-time:${exposedVersion}")
     implementation("org.postgresql:postgresql:42.7.2")
 
     //API KEY SETUP
