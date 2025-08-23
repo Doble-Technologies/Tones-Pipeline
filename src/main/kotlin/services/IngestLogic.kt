@@ -4,8 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.jdbc.andWhere
-import org.jetbrains.exposed.v1.jdbc.insert
-import org.jetbrains.exposed.v1.jdbc.insertIgnore
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.upsertReturning
@@ -99,8 +97,7 @@ fun getCallsParams(numOfCalls: Int, departments: List<Int> = emptyList(), status
  * @param callData A Response call usually auto generated
  * @return 1 if success 0 if not
  */
-fun insertCallData(callData: Call): Int? {
-    val generatedId = 0
+fun insertCallData(callData: Call): String? {
     val callStatus = callData.incident.status
     val callId:Long = callData.callId
     val callDepartments: List<Int> = buildSet {
@@ -111,16 +108,38 @@ fun insertCallData(callData: Call): Int? {
     return try {
         transaction {
             // Execute a simple query to check the connection
-            val test=CallDataTable.upsertReturning() {
-                it[id]=callId.toInt()
-                it[data]= callData
-                it[status] = callStatus
-                it[departments] = callDepartments
-            }.singleOrNull()
-            test?.get(CallDataTable.id)
+            val result = CallDataTable
+                .upsertReturning(
+                    keys = arrayOf(CallDataTable.id), // conflict target = PRIMARY KEY
+                    returning = listOf(
+                        CallDataTable.id,
+                        CallDataTable.data,
+                        CallDataTable.status,
+                        CallDataTable.departments,
+                        CallDataTable.createdAt,
+                        CallDataTable.updatedAt
+                    )
+                ) {
+                    it[id] = callId.toInt()
+                    it[data] = callData
+                    it[status] = callStatus
+                    it[departments] = callDepartments
+                }
+                .singleOrNull()
+            if (result != null) {
+                val updatedAt = result[CallDataTable.updatedAt]
+                val createdAt = result[CallDataTable.createdAt]
+                logger.info {"Here: $updatedAt ----- $createdAt"}
+                if(updatedAt==createdAt){
+                    return@transaction "Insert"
+                }else{
+                    return@transaction "Update"
+                }
+            }
+            ""
         }
     } catch (e: Exception) {
         logger.error { "Error on DB Insert: $e" }
-        generatedId
+        "Error"
     }
 }

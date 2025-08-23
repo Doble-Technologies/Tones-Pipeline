@@ -1,10 +1,26 @@
 <configuration>
+    <appender name="LOKI" class="com.github.loki4j.logback.LokiAppender">
+        <http>
+            <url>http://192.168.0.105:3100/loki/api/v1/push</url> <!-- your Loki endpoint -->
+        </http>
+        <label>
+            <pattern>app=kotlin-pipeline,level=%level</pattern>
+        </label>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="info">
+
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="LOKI"/>
+        <appender-ref ref="FILE" />
     </root>
+    <logger name="io.netty" level="OFF"/>
+
 </configuration>
