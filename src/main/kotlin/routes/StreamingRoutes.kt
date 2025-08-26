@@ -13,6 +13,8 @@ val generator: GeneratorLogic = GeneratorLogic()
 private val logger = KotlinLogging.logger {}
 
 
+
+
 fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
 
     webSocket("/callfeed") {
@@ -23,7 +25,6 @@ fun Route.streamingRoutes(sessions: MutableSet<DefaultWebSocketServerSession>) {
                 val randomValue = Random.nextLong(520_000, 680_000)
                 delay(randomValue)//5 seconds
                 val callData=generator.generateCall()
-                //Send to db
 
 
                 val jsonCall = encodeToString(callData)

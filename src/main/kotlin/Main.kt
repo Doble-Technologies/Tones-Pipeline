@@ -21,9 +21,17 @@ import io.ktor.server.response.*
 import io.ktor.http.*
 import io.ktor.server.plugins.ratelimit.*
 import kotlin.system.exitProcess
-
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import kotlinx.serialization.json.Json.Default.encodeToString
+import tech.parkhurst.routes.notificationRoutes
+import tech.parkhurst.modal.Call
 
 private val logger = KotlinLogging.logger {}
+
+object GlobalStore {
+    var pendingCalls: ArrayList<Call> = ArrayList<Call>()
+}
 
 //Todo finish streamingRoutes, and ingest routes(CRUD API)
 // Setup connect to pocketbase auth db & postgress dbs
@@ -52,14 +60,14 @@ private fun ApplicationEngine.Configuration.envConfig() {
     }
 }
 
-
-
 fun main() {
     val expectedApiKey: String = System.getenv("apiKey") ?: ""
     if(expectedApiKey == ""){
         logger.error { "Please Pass in Generated API Key for Users" }
         exitProcess(99);
     }
+
+    val client = HttpClient(CIO)
 
     embeddedServer(Netty, applicationEnvironment { log = LoggerFactory.getLogger("ktor.application") }, {envConfig()}) {
         install(Authentication) {
@@ -104,24 +112,34 @@ fun main() {
                 launch {
                     //5 Min Connected Messages
                     while (true) {
-                        delay(600_000)//Every 600 seconds do this action
-                        //Global coroutine
-                        synchronized(sessions) {
-                            sessions.forEach { session ->
-                                launch {
-                                    session.send("Connected: $session")
+                        delay(30_000)//Every  30 seconds check if there is unsent plans
+                        val pendingCalls =GlobalStore.pendingCalls
+                        //Send to all callfeeds if unsent plans exists
+                        if(!pendingCalls.isEmpty()){
+                            synchronized(sessions) {
+                                sessions.forEach { session ->
+                                    launch {
+                                        pendingCalls.forEach { call ->
+                                            session.send(encodeToString(call))
+                                        }
+                                        session.send("Connected: $session")
+                                    }
                                 }
                             }
                         }
+                        GlobalStore.pendingCalls =ArrayList<Call>()
                     }
                 }
                 streamingRoutes(sessions)
                 rateLimit(RateLimitName("protected")){
                     ingestRoutes()
                 }
+                notificationRoutes(client)
             }
+        }
+        environment.monitor.subscribe(ApplicationStopped) {
+            client.close()
         }
 
     }.start(wait = true)
 }
-

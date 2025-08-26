@@ -7,20 +7,22 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import tech.parkhurst.GlobalStore
 import tech.parkhurst.modal.Call
+import tech.parkhurst.modal.CreateUserParams
 import tech.parkhurst.modal.GetCallsParams
 import tech.parkhurst.modal.tables.toStrings
 import tech.parkhurst.services.*
 import java.sql.SQLException
 
-val gen= GeneratorLogic()
+val gen = GeneratorLogic()
 
 private val logger = KotlinLogging.logger {}
 
 
-//Todo define error objects for better error handling messaging
 fun Route.ingestRoutes(){
     get("/generateCall"){
+        //Todo: Rewrite to a single try catch with better error catching
         var generatedCall: Call?= null
         try{
             generatedCall = gen.generateCall()
@@ -30,6 +32,7 @@ fun Route.ingestRoutes(){
         try{
             if (generatedCall != null) {
                 insertCallData(generatedCall)
+                GlobalStore.pendingCalls.add(generatedCall)
                 call.respondText(generatedCall.toStrings())
             }
         }catch (e: Exception){
@@ -38,7 +41,7 @@ fun Route.ingestRoutes(){
     }
 
     get("/testendpoint"){
-        call.respondText("{'version': 1.0.7}")
+        call.respondText("{'version': 1.0.8}")
     }
 
 
@@ -78,19 +81,51 @@ fun Route.ingestRoutes(){
     post("/getCallsParams"){
         val parameters = call.receive<ByteArray>()
         val decoded = Json.decodeFromString<GetCallsParams>(parameters.decodeToString())
-        call.respond(getCallsParams(decoded.numCalls, decoded.departments, decoded.status))
+        call.respond(getCallsParams(decoded))
+    }
+
+    post("/createUser") {
+        try {
+            val parameters = call.receive<ByteArray>()
+            val decoded = Json.decodeFromString<CreateUserParams>(parameters.decodeToString())
+            call.respond(
+                createUser(decoded).toString()
+            )
+        } catch (e: Exception) {
+            val (status, error, details) = when (e) {
+                is SerializationException -> Triple(
+                    HttpStatusCode(470, "Invalid Call Data"),
+                    "Failed to parse request body into Call object",
+                    e.message ?: "Unknown serialization error"
+                )
+                is SQLException -> Triple(
+                    HttpStatusCode(471, "Database Insert Error"),
+                    "Failed to insert call data into database",
+                    e.message ?: "Unknown SQL error"
+                )
+                else -> Triple(
+                    HttpStatusCode.InternalServerError,
+                    "Unexpected server error",
+                    e.message ?: "No details available"
+                )
+            }
+
+            call.respond(status, mapOf("error" to error, "details" to details))
+            logger.error { "${e::class.simpleName}: $e" }
+        }
     }
 
     post("/ingest"){
         val parameters = call.receive<ByteArray>()
-        //Todo: Rewrite this to be a singular try catch with more accurate error messages
         var decoded: Call?= null
         try{
             decoded = Json.decodeFromString<Call>(parameters.decodeToString())
             val transactionType=insertCallData(decoded)
             //if it was an insert send notification, if update do nothing
-            
-
+            if(transactionType=="Insert"){
+                GlobalStore.pendingCalls.add(decoded)
+            }
+            //async send notification
             call.respond("{'Success': $transactionType}")
         }catch(e: SerializationException){
             logger.error { "Error parsing input data: $e" }
@@ -123,6 +158,5 @@ fun Route.ingestRoutes(){
             )
             logger.error {"Generic Unknown Error: $e"}
         }
-
     }
 }
