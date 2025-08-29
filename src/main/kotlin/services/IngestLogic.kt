@@ -58,7 +58,7 @@ fun getRecentCalls(numOfCalls: Int) : String {
         val callData:ArrayList<Call> = ArrayList<Call>()
         transaction {
             CallDataTable.select(CallDataTable.id, CallDataTable.data)
-                .orderBy(CallDataTable.id to SortOrder.DESC)
+                .orderBy(CallDataTable.createdAt to SortOrder.DESC)
                 .limit(numOfCalls)
                 .forEach{
                     callData.add(it[CallDataTable.data])
@@ -149,7 +149,6 @@ fun insertCallData(callData: Call): String? {
             if (result != null) {
                 val updatedAt = result[CallDataTable.updatedAt]
                 val createdAt = result[CallDataTable.createdAt]
-                logger.info {"Here: $updatedAt ----- $createdAt"}
                 if(updatedAt==createdAt){
                     return@transaction "Insert"
                 }else{

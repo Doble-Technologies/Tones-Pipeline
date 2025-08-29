@@ -52,12 +52,13 @@ dependencies {
     implementation("io.github.serpro69:kotlin-faker:2.0.0-rc.10")
 
     //Google Maps
-    implementation("com.google.maps:google-maps-services:2.2.0")
+    implementation("com.google.maps:google-maps-services:2.2.0") {
+        exclude(group = "org.slf4j", module = "slf4j-simple")
+    }
     implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
-    implementation("org.slf4j:slf4j-simple:1.7.25")
+//    implementation("org.slf4j:slf4j-simple:1.7.25")
     //Logging:
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.2")
-    implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("ch.qos.logback:logback-classic:1.5.18")
     implementation("com.github.loki4j:loki-logback-appender:1.5.1")
 
