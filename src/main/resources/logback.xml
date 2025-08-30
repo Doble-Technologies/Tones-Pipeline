@@ -3,25 +3,23 @@
         <http>
             <url>http://192.168.0.105:3100/loki/api/v1/push</url> <!-- your Loki endpoint -->
         </http>
-        <label>
-            <pattern>app=kotlin-pipeline,level=%level</pattern>
-        </label>
-        <encoder class="com.github.loki4j.logback.JsonEncoder">
+        <format>
+            <label>
+                <pattern>app=tones-pipeline,level=%level,service=tones-pipeline-${ENVIRONMENT},host=dev,requestId=${%X{X-Request-ID}}</pattern>
+            </label>
             <message>
-                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                <pattern>%level %logger{36} message: "%message" </pattern>
             </message>
-            <labels>
-                <pattern>app=kotlin-pipeline,level=%level,logger=%logger</pattern>
-            </labels>
-        </encoder>
+            <sortByTime>true</sortByTime>
+        </format>
     </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%X{X-Request-ID}] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="LOKI"/>
     </root>
