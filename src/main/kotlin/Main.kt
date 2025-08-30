@@ -6,6 +6,8 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.websocket.*
+import io.ktor.server.plugins.callid.*
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import tech.parkhurst.config.UserSession
@@ -70,6 +72,15 @@ fun main() {
     val client = HttpClient(CIO)
 
     embeddedServer(Netty, applicationEnvironment { log = LoggerFactory.getLogger("ktor.application") }, {envConfig()}) {
+        install(CallId) {
+            retrieveFromHeader(HttpHeaders.XRequestId)
+            generate { java.util.UUID.randomUUID().toString() } // Generate if missing
+            verify { it.isNotEmpty() } // Optionally enforce format rules
+            replyToHeader(HttpHeaders.XRequestId) // Send back to client
+        }
+        install(CallLogging) {
+            callIdMdc("X-Request-ID") // Place in MDC for use by Logback
+        }
         install(Authentication) {
             provider("apiKey") {
                 authenticate { context ->
