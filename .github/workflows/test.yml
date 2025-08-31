@@ -1,0 +1,15 @@
+name: Build and Test (Kotlin/Java)
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ['self-hosted', 'pi']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'  # or 17 if you need LTS
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
