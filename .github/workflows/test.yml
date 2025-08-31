@@ -1,15 +1,17 @@
-name: Build and Test (Kotlin/Java)
-on: [pull_request]
+name: Code Quality
+
+on: [ pull_request]
+
 jobs:
-  build:
+  quality:
     runs-on: ['self-hosted', 'pi']
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'  # or 17 if you need LTS
-      - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+          java-version: '17'
+      - name: Run Detekt
+        run: ./gradlew detekt
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck
