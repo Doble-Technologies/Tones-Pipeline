@@ -7,6 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
 import tech.parkhurst.GlobalStore
 import tech.parkhurst.modal.Call
 import tech.parkhurst.modal.CreateUserParams
@@ -22,21 +23,21 @@ private val logger = KotlinLogging.logger {}
 
 fun Route.ingestRoutes(){
     get("/generateCall"){
-        //Todo: Rewrite to a single try catch with better error catching
-        var generatedCall: Call?= null
-        try{
-            generatedCall = gen.generateCall()
-        }catch (e: Exception){
-            call.respondText("Error Generating")
-        }
-        try{
-            if (generatedCall != null) {
-                insertCallData(generatedCall)
-                GlobalStore.pendingCalls.add(generatedCall)
-                call.respondText(generatedCall.toStrings())
-            }
-        }catch (e: Exception){
+        try {
+            val generatedCall = gen.generateCall()
+            insertCallData(generatedCall)
+            GlobalStore.pendingCalls.add(generatedCall)
+            logger.info { "Generated Call: "+ generatedCall.callId}
+
+            call.respondText(generatedCall.toStrings())
+        } catch (e: ExposedSQLException) {
+            // Handle Exposed/Postgres-specific insert errors
+            logger.error(e) { "Database insert error" }
             call.respondText("Error Inserting")
+        } catch (e: Exception) {
+            // Handle everything else (including generation errors)
+            logger.error(e) { "Unexpected error" }
+            call.respondText("Error Generating")
         }
     }
 
