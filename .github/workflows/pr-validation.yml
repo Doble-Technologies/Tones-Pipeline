@@ -2,10 +2,8 @@ name: PR Validation
 on:
   pull_request:
     types: [opened]
-
 permissions:
   contents: read
-
 jobs:
   pr-validation:
     permissions:
