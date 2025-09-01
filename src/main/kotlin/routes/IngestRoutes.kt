@@ -42,7 +42,7 @@ fun Route.ingestRoutes(){
     }
 
     get("/version"){
-        call.respondText("{'version': 1.0.10}")
+        call.respondText("{'version': 1.0.11}")
     }
 
 
