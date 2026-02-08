@@ -34,7 +34,7 @@ private val logger = KotlinLogging.logger {}
 object GlobalStore {
     var pendingCalls: ArrayList<Call> = ArrayList<Call>()
 }
-
+//
 //Todo finish streamingRoutes, and ingest routes(CRUD API)
 // Setup connect to pocketbase auth db & postgress dbs
 private fun ApplicationEngine.Configuration.envConfig() {
