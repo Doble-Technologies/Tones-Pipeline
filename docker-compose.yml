@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  doble-pipeline:
+    image: john4064/doble-pipeline:latest
+    container_name: doble-pipeline
+    restart: unless-stopped
+    environment:
+      - apiKey=${API_KEY}
+      - dbPass=${DB_PASS}
+      - dbUrl=${DB_URL}
+      - dbUser=${DB_USER}
+    ports:
+      - "9090:9090"   # change if your app listens on a different port
+    volumes:
+      - ./mnt/user/applications/pipeline:/data
